@@ -1,32 +1,26 @@
 package main
 
 import (
-	"fmt"
-	"log"
-
 	"github.com/nlm/briq-cli/briq"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func init() {
-	Register(&GetUsersCmd)
+	Register(&ListUsersCmd)
 }
 
-var GetUsersCmd = cobra.Command{
-	Use:     "get-users",
-	Aliases: []string{"gu"},
+var ListUsersCmd = cobra.Command{
+	Use:     "list-users",
+	Aliases: []string{"lu"},
+	Short:   "List existing users on briq",
+	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		client, err := briq.NewClient(briqSecretKey)
-		if err != nil {
-			log.Fatal(err)
-		}
-		req := &briq.GetUsersRequest{}
-		res, err := client.GetUsers(cmd.Context(), req)
-		if err != nil {
-			log.Fatal(err)
-		}
-		for _, user := range res.Users {
-			fmt.Println(user)
-		}
+		client, err := briq.NewClient(viper.GetString(viperKeyBriqSecretKey))
+		cobra.CheckErr(err)
+		req := &briq.ListUsersRequest{}
+		res, err := client.ListUsers(cmd.Context(), req)
+		cobra.CheckErr(err)
+		cobra.CheckErr(Render(res))
 	},
 }

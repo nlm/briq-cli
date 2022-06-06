@@ -13,6 +13,10 @@ import (
 	"time"
 )
 
+var (
+	ErrNotFound error = errors.New("not found")
+)
+
 type Client struct {
 	hc      *http.Client
 	headers map[string][]string
@@ -56,7 +60,7 @@ func (client *Client) do(ctx context.Context, method, targetUrl string, request,
 	if err != nil {
 		return err
 	}
-	if res.StatusCode < 200 || res.StatusCode >= 300 {
+	if res.StatusCode < 200 || res.StatusCode >= 400 {
 		return errors.New(res.Status)
 	}
 	rdata, err := io.ReadAll(res.Body)
