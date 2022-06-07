@@ -1,13 +1,14 @@
 package main
 
 import (
+	"github.com/nlm/briq-cli/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 const (
-	viperKeyBriqSecretKey = "secret_key"
-	viperKeyBriqLoveUsers = "loved_users"
+	viperKeyBriqSecretKey  = "secret_key"
+	viperKeyBriqLovedUsers = "loved_users"
 )
 
 var (
@@ -16,7 +17,7 @@ var (
 		Use:   "briq-cli",
 		Short: "briq command-line utility",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			cobra.CheckErr(PrefixError("config error", config.Check()))
+			cobra.CheckErr(utils.PrefixError("config error", config.Check()))
 		},
 	}
 )
@@ -29,7 +30,7 @@ func main() {
 	viper.AddConfigPath(".")      // optionally look for config in the working directory
 	viper.SetConfigName("config") // name of config file (without extension)
 	viper.SetConfigType("yaml")   // REQUIRED if the config file does not have the extension in the name
-	viper.SetEnvPrefix("briq")
+	viper.SetEnvPrefix("briq")    // prefix for environment variables
 	viper.AutomaticEnv()
 	cobra.CheckErr(viper.ReadInConfig())
 	cobra.CheckErr(viper.Unmarshal(&config))

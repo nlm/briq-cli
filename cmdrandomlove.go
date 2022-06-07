@@ -1,9 +1,10 @@
 package main
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/nlm/briq-cli/briq"
+	"github.com/nlm/briq-cli/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -29,19 +30,15 @@ var RandomLoveCmd = cobra.Command{
 		req := &briq.ListUsersRequest{}
 		res, err := client.ListUsers(cmd.Context(), req)
 		cobra.CheckErr(err)
-		lovedUserConfig := viper.GetStringSlice(viperKeyBriqLoveUsers)
-		lovedUsers := []briq.User(nil)
-		for _, user := range res.Users {
-			for _, s := range lovedUserConfig {
-				if user.Username == s {
-					lovedUsers = append(lovedUsers, user)
-				}
-			}
+		targetUsers := []briq.User(nil)
+		lovedUsers := viper.GetStringSlice(viperKeyBriqLovedUsers)
+		if len(lovedUsers) == 0 {
+			targetUsers = res.Users
+		} else {
+			targetUsers = utils.FilterSlice(res.Users, lovedUsers, func(user briq.User) string { return user.Username })
 		}
-		randUsers, err := RandSlice(lovedUsers, int(count))
-		cobra.CheckErr(err)
-		for _, user := range randUsers {
-			log.Println("Sending gift to", user.DisplayName)
+		for _, user := range utils.RandSlice(targetUsers, int(count)) {
+			fmt.Println("Sending gift to", user.Username)
 			req := &briq.CreateTransactionRequest{
 				App:     briq.AppGive,
 				To:      user.Id,
