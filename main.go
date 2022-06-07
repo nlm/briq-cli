@@ -7,6 +7,7 @@ import (
 
 const (
 	viperKeyBriqSecretKey = "secret_key"
+	viperKeyBriqLoveUsers = "loved_users"
 )
 
 var (

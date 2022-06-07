@@ -29,7 +29,16 @@ var RandomLoveCmd = cobra.Command{
 		req := &briq.ListUsersRequest{}
 		res, err := client.ListUsers(cmd.Context(), req)
 		cobra.CheckErr(err)
-		randUsers, err := RandSlice(res.Users, int(count))
+		lovedUserConfig := viper.GetStringSlice(viperKeyBriqLoveUsers)
+		lovedUsers := []briq.User(nil)
+		for _, user := range res.Users {
+			for _, s := range lovedUserConfig {
+				if user.Username == s {
+					lovedUsers = append(lovedUsers, user)
+				}
+			}
+		}
+		randUsers, err := RandSlice(lovedUsers, int(count))
 		cobra.CheckErr(err)
 		for _, user := range randUsers {
 			log.Println("Sending gift to", user.DisplayName)
