@@ -17,8 +17,9 @@ func renderGetMeResponse(t table.Writer, v any) {
 	t.AppendRows([]table.Row{
 		{"Id", obj.Id},
 		{"Username", obj.Username},
-		{"Email", obj.Email},
 		{"Full Name", strings.Join([]string{obj.FirstName, obj.LastName}, " ")},
 		{"Display Name", obj.DisplayName},
+		{"Briqs to give", obj.InactiveBalance},
+		{"Collected Briqs", obj.ActiveBalance},
 	})
 }

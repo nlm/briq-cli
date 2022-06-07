@@ -17,11 +17,13 @@ var (
 	ErrNotFound error = errors.New("not found")
 )
 
+// Client is a Briq API client
 type Client struct {
 	hc      *http.Client
 	headers map[string][]string
 }
 
+// NewClient creates a new API client. A token is used for authentication.
 func NewClient(token string) (*Client, error) {
 	cookieJar, err := cookiejar.New(nil)
 	if err != nil {
@@ -41,6 +43,8 @@ func NewClient(token string) (*Client, error) {
 	}, nil
 }
 
+// do calls method on targetUrl, sending the JSON representation of the request
+// and attempting to fill the provided response object with the returnedd content.
 func (client *Client) do(ctx context.Context, method, targetUrl string, request, response any) error {
 	url, err := url.Parse(targetUrl)
 	if err != nil {

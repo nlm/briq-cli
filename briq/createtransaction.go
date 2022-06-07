@@ -28,6 +28,7 @@ type CreateTransactionResponse struct {
 	UserToId    *uuid.UUID `json:"user_to_id,omitempty"`
 }
 
+// CreateTransaction creates a transaction, which is the way to give briqs.
 func (client *Client) CreateTransaction(ctx context.Context, req *CreateTransactionRequest) (*CreateTransactionResponse, error) {
 	resp := &CreateTransactionResponse{}
 	if err := client.do(ctx, http.MethodPost, UrlTransactions, req, resp); err != nil {
