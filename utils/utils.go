@@ -1,15 +1,11 @@
-package main
+package utils
 
 import (
 	"fmt"
-
-	"github.com/nlm/briq-cli/render"
 )
 
-func Render(obj any) error {
-	return render.DefaultRenderer().Render(obj)
-}
-
+// PrefixError adds a prefix to an error and wrap it.
+// If the error is nil, this function returns nil.
 func PrefixError(prefix string, err error) error {
 	if err != nil {
 		return fmt.Errorf("%s: %w", prefix, err)

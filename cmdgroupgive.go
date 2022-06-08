@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/nlm/briq-cli/briq"
+	"github.com/nlm/briq-cli/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -31,7 +32,7 @@ var MyRoundCmd = cobra.Command{
 		req := &briq.ListUsersRequest{}
 		res, err := client.ListUsers(cmd.Context(), req)
 		cobra.CheckErr(err)
-		for _, user := range filterUserSlice(res.Users, groupUserNames) {
+		for _, user := range utils.FilterSlice(res.Users, groupUserNames, func(user briq.User) string { return user.Username }) {
 			fmt.Printf("Sending gift to %s (%v)\n", user.Username, user.Id)
 			req := &briq.CreateTransactionRequest{
 				App:     briq.AppGive,
@@ -43,18 +44,4 @@ var MyRoundCmd = cobra.Command{
 			cobra.CheckErr(Render(res))
 		}
 	},
-}
-
-func filterUserSlice(users []briq.User, userNames []string) []briq.User {
-	userNamesMap := make(map[string]struct{}, 0)
-	for _, userName := range userNames {
-		userNamesMap[userName] = struct{}{}
-	}
-	result := make([]briq.User, 0, len(userNames))
-	for _, user := range users {
-		if _, ok := userNamesMap[user.Username]; ok {
-			result = append(result, user)
-		}
-	}
-	return result
 }

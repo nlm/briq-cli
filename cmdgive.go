@@ -17,7 +17,7 @@ func init() {
 var GiveBriqCmd = cobra.Command{
 	Use:     "give",
 	Aliases: []string{"g"},
-	Short:   "Give one or more briqs to someone",
+	Short:   "Give one or more briqs to someone, with a limit of 5",
 	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		argTo, err := cmd.Flags().GetString("to")
@@ -33,7 +33,7 @@ var GiveBriqCmd = cobra.Command{
 		cobra.CheckErr(err)
 		argCount, err := cmd.Flags().GetUint("count")
 		cobra.CheckErr(err)
-		for i := uint(0); i < argCount && i < 10; i++ {
+		for i := uint(0); i < argCount && i < 5; i++ {
 			req := &briq.CreateTransactionRequest{
 				App:     briq.AppGive,
 				Comment: argMesg,
