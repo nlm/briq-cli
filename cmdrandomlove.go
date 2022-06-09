@@ -10,17 +10,21 @@ import (
 )
 
 func init() {
-	RandomLoveCmd.Flags().Uint("count", 5, "number of users to send briqs to")
+	RandomLoveCmd.Flags().Uint("count", 3, "number of users to send briqs to")
 	RandomLoveCmd.Flags().String("group", "", "limit to a specific group of users")
 	RandomLoveCmd.Flags().String("message", "Everybody needs some Briqs #Community", "message to send")
 	Register(&RandomLoveCmd)
 }
 
+const (
+	randomLoveGroupName = "random-love"
+)
+
 var RandomLoveCmd = cobra.Command{
 	Use:     "random-love",
 	Aliases: []string{"rl"},
 	Short:   "Send a briq to a number of random users",
-	Example: "random-love --count 5 --group favorites",
+	Example: "random-love --count 2 --group favorites",
 	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		client, err := briq.NewClient(viper.GetString(viperKeyBriqSecretKey))
@@ -35,14 +39,21 @@ var RandomLoveCmd = cobra.Command{
 		targetUsers := []briq.User(nil)
 		groupArg, err := cmd.Flags().GetString("group")
 		cobra.CheckErr(err)
-		if groupArg != "" {
+		if groupArg == "" {
+			// if a random-love group is defined, use it
+			groupUsers := viper.GetStringSlice(fmt.Sprintf("groups.%s", randomLoveGroupName))
+			if len(groupUsers) > 0 {
+				targetUsers = utils.FilterSlice(res.Users, groupUsers, BriqUserKey)
+			} else {
+				targetUsers = res.Users
+			}
+		} else {
+			// if a group is specified, only select users from this group
 			groupUsers := viper.GetStringSlice(fmt.Sprintf("groups.%s", groupArg))
 			if len(groupUsers) == 0 {
 				cobra.CheckErr(fmt.Errorf("group not found or empty"))
 			}
-			targetUsers = utils.FilterSlice(res.Users, groupUsers, func(user briq.User) string { return user.Username })
-		} else {
-			targetUsers = res.Users
+			targetUsers = utils.FilterSlice(res.Users, groupUsers, BriqUserKey)
 		}
 		for _, user := range utils.RandSlice(targetUsers, int(count)) {
 			fmt.Println("Sending gift to", user.Username)
