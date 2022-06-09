@@ -32,7 +32,7 @@ var MyRoundCmd = cobra.Command{
 		req := &briq.ListUsersRequest{}
 		res, err := client.ListUsers(cmd.Context(), req)
 		cobra.CheckErr(err)
-		for _, user := range utils.FilterSlice(res.Users, groupUserNames, func(user briq.User) string { return user.Username }) {
+		for _, user := range utils.FilterSlice(res.Users, groupUserNames, BriqUserKey) {
 			fmt.Printf("Sending gift to %s (%v)\n", user.Username, user.Id)
 			req := &briq.CreateTransactionRequest{
 				App:     briq.AppGive,

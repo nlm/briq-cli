@@ -1,0 +1,8 @@
+# add the token from your briq "Authorization" header
+secret_key: "your-token"
+
+# you can define groups that can be used in some commands
+groups:
+  demo:
+    - user1
+    - user2
