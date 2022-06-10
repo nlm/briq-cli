@@ -9,7 +9,7 @@ import (
 func init() {
 	GiveBriqCmd.Flags().String("to", "", "username to give to")
 	GiveBriqCmd.Flags().String("message", "Have a Briq! #Rock-solid", "message to send")
-	GiveBriqCmd.Flags().Uint("count", 1, "how many briqs to give")
+	GiveBriqCmd.Flags().Uint("amount", 1, "how many briqs to give")
 	GiveBriqCmd.MarkFlagRequired("to")
 	Register(&GiveBriqCmd)
 }
@@ -24,6 +24,8 @@ var GiveBriqCmd = cobra.Command{
 		cobra.CheckErr(err)
 		argMesg, err := cmd.Flags().GetString("message")
 		cobra.CheckErr(err)
+		argAmount, err := cmd.Flags().GetUint("amount")
+		cobra.CheckErr(err)
 		client, err := briq.NewClient(viper.GetString(viperKeyBriqSecretKey))
 		cobra.CheckErr(err)
 		user, err := client.GetUser(
@@ -31,9 +33,7 @@ var GiveBriqCmd = cobra.Command{
 			&briq.GetUserRequest{Username: argTo},
 		)
 		cobra.CheckErr(err)
-		argCount, err := cmd.Flags().GetUint("count")
-		cobra.CheckErr(err)
-		for i := uint(0); i < argCount && i < 5; i++ {
+		for i := uint(0); i < CapBriqAmount(argAmount); i++ {
 			req := &briq.CreateTransactionRequest{
 				App:     briq.AppGive,
 				Comment: argMesg,
