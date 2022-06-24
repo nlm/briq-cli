@@ -11,11 +11,12 @@ func init() {
 
 func renderListUsersResponse(t table.Writer, v any) {
 	obj := v.(*briq.ListUsersResponse)
-	t.AppendHeader(table.Row{"Username", "Display Name", "Balance", "To Give"})
+	t.AppendHeader(table.Row{"Username", "Display Name", "XP", "Balance", "To Give"})
 	for _, user := range obj.Users {
 		t.AppendRow(table.Row{
 			user.Username,
 			user.DisplayName,
+			user.Points,
 			user.ActiveBalance,
 			user.InactiveBalance,
 		})
