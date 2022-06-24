@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -16,9 +17,16 @@ type GetUserRequest struct {
 }
 
 type User struct {
-	Id          uuid.UUID `json:"id,omitempty"`
-	Username    string    `json:"username,omitempty"`
-	DisplayName string    `json:"displayName,omitempty"`
+	Id              uuid.UUID  `json:"id,omitempty"`
+	Username        string     `json:"username,omitempty"`
+	DisplayName     string     `json:"displayName,omitempty"`
+	Email           string     `json:"email,omitempty"`
+	ActiveBalance   int        `json:"activeBalance,omitempty"`
+	InactiveBalance int        `json:"inactiveBalance,omitempty"`
+	CreatedAt       *time.Time `json:"created_at,omitempty"`
+	Suspended       bool       `json:"suspended,omitempty"`
+	Role            string     `json:"role,omitempty"`
+	Points          int        `json:"points,omitempty"`
 }
 
 type ListUsersResponse struct {
