@@ -14,7 +14,8 @@ import (
 )
 
 var (
-	ErrNotFound error = errors.New("not found")
+	ErrNotFound   error = errors.New("not found")
+	ErrBadRequest       = fmt.Errorf("%d %s", http.StatusBadRequest, http.StatusText(http.StatusBadRequest))
 )
 
 // Client is a Briq API client
@@ -64,7 +65,10 @@ func (client *Client) do(ctx context.Context, method, targetUrl string, request,
 	if err != nil {
 		return err
 	}
-	if res.StatusCode < 200 || res.StatusCode >= 400 {
+	if res.StatusCode == 400 {
+		return ErrBadRequest
+	}
+	if res.StatusCode < 200 || res.StatusCode > 400 {
 		return errors.New(res.Status)
 	}
 	rdata, err := io.ReadAll(res.Body)
