@@ -55,7 +55,7 @@ func (s *Set[T]) Len() int {
 
 // Items returns a slice with copies of the items of the Set.
 func (s *Set[T]) Items() []T {
-	items := make([]T, len(s.m))
+	items := make([]T, 0, len(s.m))
 	for k := range s.m {
 		items = append(items, k)
 	}

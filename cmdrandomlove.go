@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/nlm/briq-cli/briq"
@@ -54,7 +55,7 @@ var RandomLoveCmd = cobra.Command{
 			// if a group is specified, only select users from this group
 			groupUsers := viper.GetStringSlice(fmt.Sprintf("groups.%s", argToGroup))
 			if len(groupUsers) == 0 {
-				cobra.CheckErr(fmt.Errorf("group not found or empty"))
+				cobra.CheckErr(errors.New("group not found or empty"))
 			}
 			targetUsers = utils.FilterSlice(res.Users, groupUsers, BriqUserKey)
 		}
@@ -67,6 +68,11 @@ var RandomLoveCmd = cobra.Command{
 					Comment: argMessage,
 				}
 				res, err := client.CreateTransaction(cmd.Context(), req)
+				if err == briq.ErrBadRequest {
+					fmt.Println(err, "=> too many briqs sent to", user.Username)
+					err = nil
+					continue
+				}
 				cobra.CheckErr(err)
 				cobra.CheckErr(Render(res))
 			}
