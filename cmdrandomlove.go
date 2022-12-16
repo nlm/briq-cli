@@ -68,14 +68,13 @@ var RandomLoveCmd = cobra.Command{
 					Comment: argMessage,
 				}
 				res, err := client.CreateTransaction(cmd.Context(), req)
-				cobra.CheckErr(err)
-
-				if err = Render(res); err == briq.ErrBadRequest {
+				if err == briq.ErrBadRequest {
 					fmt.Println(err, "=> too many briqs sent to", user.Username)
 					err = nil
 					continue
 				}
 				cobra.CheckErr(err)
+				cobra.CheckErr(Render(res))
 			}
 		}
 	},
