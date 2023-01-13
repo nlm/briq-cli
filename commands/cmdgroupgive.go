@@ -1,9 +1,10 @@
-package main
+package commands
 
 import (
 	"fmt"
 
 	"github.com/nlm/briq-cli/briq"
+	"github.com/nlm/briq-cli/render"
 	"github.com/nlm/briq-cli/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -35,8 +36,8 @@ var GroupGiveCmd = cobra.Command{
 		req := &briq.ListUsersRequest{}
 		res, err := client.ListUsers(cmd.Context(), req)
 		cobra.CheckErr(err)
-		for _, user := range utils.FilterSlice(res.Users, groupUserNames, BriqUserKey) {
-			for i := uint(0); i < CapBriqAmount(argAmount); i++ {
+		for _, user := range utils.FilterSlice(res.Users, groupUserNames, utils.BriqUserKey) {
+			for i := uint(0); i < utils.CapBriqAmount(argAmount); i++ {
 				fmt.Printf("Sending gift to %s (%v)\n", user.Username, user.Id)
 				req := &briq.CreateTransactionRequest{
 					App:     briq.AppGive,
@@ -45,7 +46,7 @@ var GroupGiveCmd = cobra.Command{
 				}
 				res, err := client.CreateTransaction(cmd.Context(), req)
 				cobra.CheckErr(err)
-				cobra.CheckErr(Render(res))
+				cobra.CheckErr(render.Render(res))
 			}
 		}
 	},

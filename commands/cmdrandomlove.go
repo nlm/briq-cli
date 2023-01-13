@@ -1,9 +1,10 @@
-package main
+package commands
 
 import (
 	"fmt"
 
 	"github.com/nlm/briq-cli/briq"
+	"github.com/nlm/briq-cli/render"
 	"github.com/nlm/briq-cli/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -46,7 +47,7 @@ var RandomLoveCmd = cobra.Command{
 			// if a random-love group is defined, use it
 			groupUsers := viper.GetStringSlice(fmt.Sprintf("groups.%s", randomLoveGroupName))
 			if len(groupUsers) > 0 {
-				targetUsers = utils.FilterSlice(res.Users, groupUsers, BriqUserKey)
+				targetUsers = utils.FilterSlice(res.Users, groupUsers, utils.BriqUserKey)
 			} else {
 				targetUsers = res.Users
 			}
@@ -56,10 +57,10 @@ var RandomLoveCmd = cobra.Command{
 			if len(groupUsers) == 0 {
 				cobra.CheckErr(fmt.Errorf("group not found or empty"))
 			}
-			targetUsers = utils.FilterSlice(res.Users, groupUsers, BriqUserKey)
+			targetUsers = utils.FilterSlice(res.Users, groupUsers, utils.BriqUserKey)
 		}
 		for _, user := range utils.RandSlice(targetUsers, int(argUserCount)) {
-			for i := uint(0); i < CapBriqAmount(argAmount); i++ {
+			for i := uint(0); i < utils.CapBriqAmount(argAmount); i++ {
 				fmt.Println("Sending gift to", user.Username)
 				req := &briq.CreateTransactionRequest{
 					App:     briq.AppGive,
@@ -68,7 +69,7 @@ var RandomLoveCmd = cobra.Command{
 				}
 				res, err := client.CreateTransaction(cmd.Context(), req)
 				cobra.CheckErr(err)
-				cobra.CheckErr(Render(res))
+				cobra.CheckErr(render.Render(res))
 			}
 		}
 	},

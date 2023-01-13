@@ -55,3 +55,7 @@ func (r Renderer) Render(obj any) error {
 	}
 	return nil
 }
+
+func Render(obj any) error {
+	return DefaultRenderer().Render(obj)
+}

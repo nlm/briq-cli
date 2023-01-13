@@ -1,7 +1,9 @@
-package main
+package commands
 
 import (
 	"github.com/nlm/briq-cli/briq"
+	"github.com/nlm/briq-cli/render"
+	"github.com/nlm/briq-cli/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -33,7 +35,7 @@ var GiveBriqCmd = cobra.Command{
 			&briq.GetUserRequest{Username: argTo},
 		)
 		cobra.CheckErr(err)
-		for i := uint(0); i < CapBriqAmount(argAmount); i++ {
+		for i := uint(0); i < utils.CapBriqAmount(argAmount); i++ {
 			req := &briq.CreateTransactionRequest{
 				App:     briq.AppGive,
 				Comment: argMesg,
@@ -41,7 +43,7 @@ var GiveBriqCmd = cobra.Command{
 			}
 			res, err := client.CreateTransaction(cmd.Context(), req)
 			cobra.CheckErr(err)
-			cobra.CheckErr(Render(res))
+			cobra.CheckErr(render.Render(res))
 		}
 	},
 }

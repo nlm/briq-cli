@@ -1,6 +1,8 @@
-package main
+package config
 
 import "errors"
+
+var ConfigFile Config
 
 type Config struct {
 	SecretKey string              `mapstructure:"secret_key"`
